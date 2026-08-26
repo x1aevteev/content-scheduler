@@ -60,11 +60,12 @@
 </template>
 
 <script setup lang="ts">
+import { reactive, ref } from 'vue'
 import AppLayout from '@/components/AppLayout.vue'
-import { usePostsStore } from '@/stores/posts'
+import { usePostsStore, type Post } from '@/stores/posts'
 
 const posts = usePostsStore()
-const form = reactive({ title: '', content: '', platform: 'twitter', status: 'draft' as const, scheduled_at: '' })
+const form = reactive({ title: '', content: '', platform: 'twitter', status: 'draft' as Post['status'], scheduled_at: '' })
 const generating = ref(false)
 const showAiPanel = ref(false)
 const aiTopic = ref('')
