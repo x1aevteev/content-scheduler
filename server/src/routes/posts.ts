@@ -2,9 +2,9 @@ import { Router } from 'express'
 import { pool } from '../db/index.js'
 import OpenAI from 'openai'
 import { asyncRoute } from '../http.js'
+import { parseGenerationInput, MAX_TOPIC_LENGTH } from '../generation.js'
 
 const router = Router()
-const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY })
 
 router.get('/', asyncRoute(async (req, res) => {
   const { rows } = await pool.query('SELECT * FROM posts ORDER BY created_at DESC')
@@ -36,7 +36,15 @@ router.delete('/:id', asyncRoute(async (req, res) => {
 }))
 
 router.post('/generate', asyncRoute(async (req, res) => {
-  const { topic, platform } = req.body
+  const input = parseGenerationInput(req.body)
+  if (!input) {
+    return res.status(400).json({ error: `Provide a topic of 1–${MAX_TOPIC_LENGTH} characters and a supported platform.` })
+  }
+  if (!process.env.OPENAI_API_KEY?.trim()) {
+    return res.status(503).json({ error: 'AI generation is not configured on this server.' })
+  }
+  const { topic, platform } = input
+  const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY })
   const completion = await openai.chat.completions.create({
     model: 'gpt-4o',
     messages: [{
@@ -45,7 +53,9 @@ router.post('/generate', asyncRoute(async (req, res) => {
     }],
     max_tokens: 300,
   })
-  res.json({ content: completion.choices[0].message.content })
+  const content = completion.choices[0]?.message.content
+  if (!content?.trim()) return res.status(502).json({ error: 'No content was generated. Please try again.' })
+  res.json({ content })
 }))
 
 export default router
