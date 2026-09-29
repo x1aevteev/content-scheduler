@@ -5,13 +5,13 @@
 
       <fieldset :disabled="saving || generating" class="bg-white rounded-xl border border-gray-200 p-6 space-y-4">
         <div>
-          <label class="block text-sm font-medium text-gray-700 mb-1">Title</label>
-          <input v-model="form.title" type="text" class="input" placeholder="Post title" />
+          <label for="post-title" class="block text-sm font-medium text-gray-700 mb-1">Title</label>
+          <input id="post-title" v-model="form.title" type="text" class="input" placeholder="Post title" />
         </div>
 
         <div>
-          <label class="block text-sm font-medium text-gray-700 mb-1">Platform</label>
-          <select v-model="form.platform" class="input">
+          <label for="post-platform" class="block text-sm font-medium text-gray-700 mb-1">Platform</label>
+          <select id="post-platform" v-model="form.platform" class="input">
             <option value="twitter">Twitter / X</option>
             <option value="linkedin">LinkedIn</option>
             <option value="instagram">Instagram</option>
@@ -21,31 +21,31 @@
 
         <div>
           <div class="flex items-center justify-between mb-1">
-            <label class="text-sm font-medium text-gray-700">Content</label>
+            <label for="post-content" class="text-sm font-medium text-gray-700">Content</label>
             <button @click="openAiGenerate" :disabled="generating"
               class="text-xs text-indigo-600 hover:text-indigo-800 font-medium disabled:opacity-50">
               {{ generating ? '✨ Generating...' : '✨ Generate with AI' }}
             </button>
           </div>
           <div v-if="showAiPanel" class="mb-2 flex gap-2">
-            <input v-model="aiTopic" type="text" class="input flex-1" placeholder="Topic to write about..." />
+            <input v-model="aiTopic" type="text" class="input flex-1 min-w-0" aria-label="Topic for AI generation" maxlength="2000" placeholder="Topic to write about..." />
             <button @click="generate" class="bg-indigo-600 text-white px-4 py-2 rounded-lg text-sm">Go</button>
           </div>
-          <textarea v-model="form.content" rows="6" class="input resize-none" placeholder="Write your post..." />
+          <textarea id="post-content" v-model="form.content" rows="6" class="input resize-none" placeholder="Write your post..." />
         </div>
 
-        <div class="grid grid-cols-2 gap-4">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">Status</label>
-            <select v-model="form.status" class="input">
+            <label for="post-status" class="block text-sm font-medium text-gray-700 mb-1">Status</label>
+            <select id="post-status" v-model="form.status" class="input">
               <option value="draft">Draft</option>
               <option value="scheduled">Scheduled</option>
               <option value="published">Published</option>
             </select>
           </div>
           <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">Schedule Date</label>
-            <input v-model="form.scheduled_at" type="datetime-local" class="input" :disabled="form.status !== 'scheduled'" />
+            <label for="post-date" class="block text-sm font-medium text-gray-700 mb-1">Schedule Date</label>
+            <input id="post-date" v-model="form.scheduled_at" type="datetime-local" class="input min-w-0" :disabled="form.status !== 'scheduled'" />
           </div>
         </div>
 
