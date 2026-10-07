@@ -17,6 +17,7 @@
       </div>
 
       <div v-if="posts.loading" class="text-gray-500 text-sm">Loading...</div>
+      <p v-if="posts.error" role="alert" class="mb-4 text-red-600 text-sm">{{ posts.error }}</p>
 
       <div class="space-y-3">
         <div v-for="post in posts.byStatus(activeTab)" :key="post.id"
@@ -41,7 +42,7 @@
           </div>
           <button @click="posts.remove(post.id)" class="text-gray-400 hover:text-red-600 transition text-sm">✕</button>
         </div>
-        <p v-if="!posts.byStatus(activeTab).length" class="text-gray-400 text-sm text-center py-10">
+        <p v-if="!posts.loading && !posts.error && !posts.byStatus(activeTab).length" class="text-gray-400 text-sm text-center py-10">
           No {{ activeTab }} posts
         </p>
       </div>

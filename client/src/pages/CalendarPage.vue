@@ -33,6 +33,8 @@
       </div>
 
       <h2 class="font-semibold text-gray-800 mb-3">Scheduled This Month</h2>
+      <p v-if="posts.error" role="alert" class="mb-4 text-red-600 text-sm">{{ posts.error }}</p>
+      <p v-if="posts.loading" class="text-gray-500 text-sm">Loading...</p>
       <div class="space-y-2">
         <div v-for="post in scheduledThisMonth" :key="post.id"
           class="bg-white rounded-lg border border-gray-200 px-4 py-3 flex items-center justify-between">
@@ -42,7 +44,7 @@
           </div>
           <span class="text-xs px-2 py-1 rounded-full bg-blue-100 text-blue-700">scheduled</span>
         </div>
-        <p v-if="!scheduledThisMonth.length" class="text-gray-400 text-sm text-center py-6">No posts scheduled this month</p>
+        <p v-if="!posts.loading && !posts.error && !scheduledThisMonth.length" class="text-gray-400 text-sm text-center py-6">No posts scheduled this month</p>
       </div>
     </div>
   </AppLayout>
