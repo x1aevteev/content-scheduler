@@ -10,9 +10,9 @@
 
       <div class="bg-white rounded-xl border border-gray-200 p-4 mb-6">
         <div class="flex items-center justify-between mb-4">
-          <button @click="prevMonth" class="text-gray-500 hover:text-gray-900 px-2">←</button>
+          <button @click="prevMonth" aria-label="Previous month" class="text-gray-500 hover:text-gray-900 px-2">←</button>
           <span class="font-semibold text-gray-800">{{ monthLabel }}</span>
-          <button @click="nextMonth" class="text-gray-500 hover:text-gray-900 px-2">→</button>
+          <button @click="nextMonth" aria-label="Next month" class="text-gray-500 hover:text-gray-900 px-2">→</button>
         </div>
         <div class="grid grid-cols-7 gap-1 text-center text-xs text-gray-500 mb-2">
           <div v-for="d in ['Sun','Mon','Tue','Wed','Thu','Fri','Sat']" :key="d">{{ d }}</div>
@@ -54,6 +54,7 @@
 import { computed, onMounted, ref } from 'vue'
 import AppLayout from '@/components/AppLayout.vue'
 import { usePostsStore } from '@/stores/posts'
+import { getCalendarDays, getScheduledPostsForMonth } from '@/lib/calendar'
 
 const posts = usePostsStore()
 onMounted(() => posts.fetch())
@@ -67,11 +68,7 @@ const monthLabel = computed(() => new Date(currentYear.value, currentMonth.value
 function prevMonth() { if (currentMonth.value === 0) { currentMonth.value = 11; currentYear.value-- } else currentMonth.value-- }
 function nextMonth() { if (currentMonth.value === 11) { currentMonth.value = 0; currentYear.value++ } else currentMonth.value++ }
 
-const calendarDays = computed(() => {
-  const first = new Date(currentYear.value, currentMonth.value, 1).getDay()
-  const last = new Date(currentYear.value, currentMonth.value + 1, 0).getDate()
-  return [...Array(first).fill(null), ...Array.from({ length: last }, (_, i) => i + 1)]
-})
+const calendarDays = computed(() => getCalendarDays(currentYear.value, currentMonth.value))
 
 function isToday(day: number) {
   const t = new Date()
@@ -87,10 +84,6 @@ function postsOnDay(day: number) {
 }
 
 const scheduledThisMonth = computed(() =>
-  posts.posts.filter(p => {
-    if (!p.scheduled_at || p.status !== 'scheduled') return false
-    const d = new Date(p.scheduled_at)
-    return d.getFullYear() === currentYear.value && d.getMonth() === currentMonth.value
-  })
+  getScheduledPostsForMonth(posts.posts, currentYear.value, currentMonth.value)
 )
 </script>
