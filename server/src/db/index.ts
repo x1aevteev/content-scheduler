@@ -1,9 +1,14 @@
 import pg from 'pg'
 import 'dotenv/config'
+import { newDb } from 'pg-mem'
 
 const { Pool } = pg
 
-export const pool = new Pool({ connectionString: process.env.DATABASE_URL })
+export const localPreview = process.env.DEMO_MODE === '1'
+const DemoPool = localPreview ? newDb().adapters.createPg().Pool : null
+export const pool: pg.Pool = DemoPool
+  ? new DemoPool()
+  : new Pool({ connectionString: process.env.DATABASE_URL })
 
 export async function initDb() {
   await pool.query(`

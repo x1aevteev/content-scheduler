@@ -17,5 +17,9 @@ app.use(handleApiError)
 const PORT = process.env.PORT || 3001
 
 initDb().then(() => {
-  app.listen(PORT, () => console.log(`Server running on :${PORT}`))
+  if (process.env.DEMO_MODE === '1') {
+    app.listen(Number(PORT), '127.0.0.1', () => console.log(`Server running on :${PORT}`))
+  } else {
+    app.listen(PORT, () => console.log(`Server running on :${PORT}`))
+  }
 })
