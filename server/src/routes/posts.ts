@@ -1,5 +1,5 @@
 import { Router } from 'express'
-import { pool } from '../db/index.js'
+import { localPreview, pool } from '../db/index.js'
 import OpenAI from 'openai'
 import { asyncRoute } from '../http.js'
 import { parseGenerationInput, MAX_TOPIC_LENGTH } from '../generation.js'
@@ -39,6 +39,15 @@ router.post('/generate', asyncRoute(async (req, res) => {
   const input = parseGenerationInput(req.body)
   if (!input) {
     return res.status(400).json({ error: `Provide a topic of 1–${MAX_TOPIC_LENGTH} characters and a supported platform.` })
+  }
+  if (localPreview) {
+    const drafts: Record<string, string> = {
+      twitter: 'What are you working on this week? Share one practical tip below.',
+      linkedin: 'This week we are sharing what we learned and inviting feedback. What would you add?',
+      instagram: 'Behind the scenes: one small step at a time. What would you like to see next?',
+      facebook: 'We would love to hear your thoughts. Tell us what has worked for you.',
+    }
+    return res.json({ content: `${input.topic}\n\n${drafts[input.platform]}` })
   }
   if (!process.env.OPENAI_API_KEY?.trim()) {
     return res.status(503).json({ error: 'AI generation is not configured on this server.' })

@@ -51,3 +51,7 @@ DATABASE_URL=postgresql://user:pass@localhost:5432/content_scheduler
 OPENAI_API_KEY=sk-...
 PORT=3001
 ```
+
+## Local walkthrough without credentials
+
+Run `npm run install:all`, then start `DEMO_MODE=1 npm run dev:server` and `npm run dev:client` in separate terminals. Posts are stored in an in-memory database and reset when the server restarts. The draft generator uses local templates, not an AI provider. You can create, edit, schedule, and delete posts through the real API.
